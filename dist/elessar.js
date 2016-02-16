@@ -65,7 +65,7 @@ var has = Object.prototype.hasOwnProperty;
 module.exports = function getEventProperty(prop, event) {
   return has.call(event, prop) ? event[prop]
        : event.originalEvent && event.originalEvent.touches ? event.originalEvent.touches[0][prop]
-       : 0;
+       : undefined;
 };
 
 },{}],3:[function(require,module,exports){
@@ -373,7 +373,7 @@ var Range = Element.extend(vertical).extend({
     var self = this,
     beginStart = this.startProp('offset'),
     beginPosStart = this.startProp('position'),
-    mousePos = getEventProperty(this.ifVertical('clientY','clientX'), origEv);
+    mousePos = getEventProperty(this.ifVertical('clientY','clientX'), origEv),
     mouseOffset = mousePos ? mousePos - beginStart : 0,
     beginSize = this.totalSize(),
     perant = this.options.perant,
@@ -384,7 +384,7 @@ var Range = Element.extend(vertical).extend({
       ev.stopPropagation();
       ev.preventDefault();
       var mousePos = getEventProperty(self.ifVertical('clientY','clientX'), ev);
-      if(mousePos) {
+      if(typeof mousePos !== 'undefined') {
         var start = mousePos - perantStart - mouseOffset;
 
         if (start >= 0 && start <= perantSize - beginSize) {
@@ -416,7 +416,7 @@ var Range = Element.extend(vertical).extend({
       var mousePos = getEventProperty(self.ifVertical('clientY','clientX'), ev);
       var size = mousePos - beginStart;
 
-      if(mousePos) {
+      if(typeof mousePos !== 'undefined') {
         if (size > perantSize - beginPosStart) size = perantSize - beginPosStart;
         if (size >= minSize) {
           self.val([self.range[0], self.range[0] + size / perantSize], {dontApplyDelta: true});
@@ -451,7 +451,7 @@ var Range = Element.extend(vertical).extend({
       var start = mousePos - perantStart - mouseOffset;
       var size = beginPosStart + beginSize - start;
 
-      if(mousePos) {
+      if(typeof mousePos !== 'undefined') {
         if (start < 0) {
           start = 0;
           size = beginPosStart + beginSize;
@@ -732,6 +732,7 @@ RangeBar.defaults = {
 };
 
 module.exports = RangeBar;
+window.RangeBar = RangeBar;
 
 },{"./element":1,"./eventprop":2,"./indicator":3,"./mark.js":4,"./phantom":5,"./range":7,"./vertical":9}],9:[function(require,module,exports){
 module.exports = {
